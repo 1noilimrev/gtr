@@ -18,7 +18,6 @@ gtr rm -s               # Remove current worktree (returns to git root)
 gtr rm -a [-f]          # Remove all worktrees
 gtr rm -m <branch>      # Merge into main, then remove
 gtr path <branch>       # Print worktree path
-gtr fix [-a] <branch>   # Fix .claude symlink (-a: all)
 gtr claude <branch>     # Run claude in worktree
 gtr opencode <branch>   # Run opencode in worktree
 ```

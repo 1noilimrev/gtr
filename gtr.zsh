@@ -166,33 +166,6 @@ gtr() {
         return 0
     }
 
-    __fix_worktree_claude() {
-        local git_root="$1"
-        local worktree_dir="$2"
-        local claude_dir=".claude"
-        local wt_name="${worktree_dir:t}"
-
-        local target="$worktree_dir/$claude_dir"
-
-        if [[ -L "$target" ]]; then
-            echo "skip: '$wt_name' (.claude already symlinked)" >&2
-            return 1
-        fi
-
-        if [[ -d "$target" ]]; then
-            rm -rf "$target"
-            if ln -s "$git_root/$claude_dir" "$target" 2>/dev/null; then
-                echo "✓ fixed '$wt_name' (.claude → symlink)" >&2
-                return 0
-            else
-                echo "error: failed to create symlink for '$wt_name'" >&2
-                return 1
-            fi
-        fi
-
-        return 1
-    }
-
     # Check if a tool name is a supported AI tool
     __is_ai_tool() {
         local tool="$1"
@@ -639,53 +612,6 @@ gtr() {
         return 0
     }
 
-    _fix() {
-        local all_mode=false
-        local worktree_name=""
-
-        while [[ $# -gt 0 ]]; do
-            case "$1" in
-                -a|--all) all_mode=true; shift ;;
-                -*) echo "error: unknown option '$1'" >&2; return 1 ;;
-                *) worktree_name="$1"; shift ;;
-            esac
-        done
-
-        __require_git_repo || return 1
-
-        local git_root
-        git_root=$(__get_git_root)
-        local worktree_workspace="$git_root/$WORKTREE_WORKSPACE_DIR"
-
-        if $all_mode; then
-            if [[ ! -d "$worktree_workspace" ]]; then
-                echo "no worktrees found" >&2
-                return 0
-            fi
-
-            local fixed=0
-            for dir in "$worktree_workspace"/*(N/); do
-                [[ -d "$dir" ]] || continue
-                if __fix_worktree_claude "$git_root" "$dir"; then
-                    ((fixed++))
-                fi
-            done
-            echo "fixed $fixed worktree(s)" >&2
-            return 0
-        fi
-
-        if [[ -z "$worktree_name" ]]; then
-            echo "error: worktree name required (or use -a for all)" >&2
-            return 1
-        fi
-
-        local worktree_dir
-        worktree_dir=$(__get_worktree_path "$git_root" "$worktree_name")
-        __require_worktree_exists "$worktree_dir" "$worktree_name" || return 1
-
-        __fix_worktree_claude "$git_root" "$worktree_dir"
-    }
-
     _version() {
         echo "gtr $GTR_VERSION"
     }
@@ -706,7 +632,6 @@ COMMANDS:
         -m, --merge [target]    Merge branch before removing (default: main)
     cd <branch>                 Change to worktree directory
     path <branch>               Get worktree path (stdout only)
-    fix [-a] [branch]           Fix .claude symlink (-a: all worktrees)
     claude <branch> [-- args]   Run claude in worktree
     opencode <branch> [-- args] Run opencode in worktree
     merge <src> [target]        Merge src into target (default: main)
@@ -748,9 +673,6 @@ EOF
             ;;
         path)
             _path "$@"
-            ;;
-        fix)
-            _fix "$@"
             ;;
         merge)
             _merge "$@"
