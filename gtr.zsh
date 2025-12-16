@@ -28,7 +28,7 @@
 # Note: Branch names with '/' are converted to '-' for directory names
 # --------------------------------------------------------------------------------------
 
-GTR_VERSION="0.1.0"
+GTR_VERSION="0.1.1"
 
 gtr() {
     # Configuration
@@ -351,7 +351,7 @@ gtr() {
                 return 1
             fi
 
-            if [[ -n $(git status --porcelain) ]]; then
+            if ! $force_mode && [[ -n $(git status --porcelain) ]]; then
                 echo "error: uncommitted changes in worktree" >&2
                 echo "  → commit or stash changes first" >&2
                 return 1
@@ -381,6 +381,8 @@ gtr() {
             fi
 
             echo "✓ worktree removed"
+            cd "$git_root" || return 1
+            echo "→ $git_root" >&2
             return 0
         fi
 
@@ -403,7 +405,7 @@ gtr() {
             return 1
         fi
 
-        if [[ -n $(git -C "$worktree_path" status --porcelain) ]]; then
+        if ! $force_mode && [[ -n $(git -C "$worktree_path" status --porcelain) ]]; then
             echo "error: uncommitted changes in worktree '$worktree_name'" >&2
             echo "  → commit or stash changes first" >&2
             return 1
@@ -605,9 +607,9 @@ USAGE:
 COMMANDS:
     add <branch> [opts]         Create new worktree (idempotent)
     rm <branch>                 Remove worktree
-        -s, --self              Remove current worktree
+        -s, --self              Remove current worktree (cd to git root after)
         -a, --all               Remove all worktrees
-        -f, --force             Force remove (skip confirmation/uncommitted check)
+        -f, --force             Skip uncommitted check (+ skip confirmation for -a)
         -m, --merge [target]    Merge branch before removing (default: main)
     cd <branch>                 Change to worktree directory
     path <branch>               Get worktree path (stdout only)
