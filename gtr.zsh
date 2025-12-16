@@ -28,7 +28,7 @@
 # Note: Branch names with '/' are converted to '-' for directory names
 # --------------------------------------------------------------------------------------
 
-GTR_VERSION="0.1.1"
+GTR_VERSION="0.1.2"
 
 gtr() {
     # Configuration
@@ -191,7 +191,7 @@ gtr() {
         local args=("$@")
         local new_args=()
 
-        for i in "${!args[@]}"; do
+        for ((i=1; i<=${#args[@]}; i++)); do
             if [[ "${args[$i]}" == "-b" ]]; then
                 has_b_option=true
                 target_branch="${args[$((i+1))]}"
