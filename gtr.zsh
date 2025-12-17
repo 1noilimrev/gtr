@@ -148,24 +148,6 @@ gtr() {
         return 0
     }
 
-    __link_claude_dir() {
-        local git_root="$1"
-        local worktree_dir="$2"
-        local claude_dir=".claude"
-
-        if [[ -d "$git_root/$claude_dir" ]]; then
-            rm -rf "$worktree_dir/$claude_dir"
-            if ln -s "$git_root/$claude_dir" "$worktree_dir/$claude_dir" 2>/dev/null; then
-                echo "✓ linked $claude_dir to worktree" >&2
-                return 0
-            else
-                echo "warning: failed to link $claude_dir" >&2
-                return 1
-            fi
-        fi
-        return 0
-    }
-
     # Check if a tool name is a supported AI tool
     __is_ai_tool() {
         local tool="$1"
@@ -242,7 +224,6 @@ gtr() {
         __link_env_file "$git_root" "$worktree_dir"
         __link_node_modules "$git_root" "$worktree_dir"
         __link_python_venv "$git_root" "$worktree_dir"
-        __link_claude_dir "$git_root" "$worktree_dir"
 
         echo "→ $worktree_dir" >&2
         echo "$worktree_dir"
