@@ -1,34 +1,42 @@
-# gtr
+# gtr (DEPRECATED)
 
-Git worktree wrapper with auto-setup for zsh.
+> **⚠️ This project has been renamed to `gwt`. Please migrate to the new package.**
 
-## Install
+## Migration
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/1noilimrev/gtr/main/install.sh | sh
-```
-
-## Commands
+Run the migration script to switch from `gtr` to `gwt`:
 
 ```bash
-gtr add <branch>        # Create worktree (auto-links .env, node_modules, .venv)
-gtr cd <branch>         # Navigate to worktree
-gtr rm <branch>         # Remove worktree
-gtr rm -s               # Remove current worktree (returns to git root)
-gtr rm -a [-f]          # Remove all worktrees
-gtr rm -m <branch>      # Merge into main, then remove
-gtr path <branch>       # Print worktree path
-gtr claude <branch>     # Run claude in worktree
-gtr opencode <branch>   # Run opencode in worktree
+curl -fsSL https://raw.githubusercontent.com/1noilimrev/gtr/main/migrate.sh | sh
 ```
 
-## Notes
+Or manually:
 
-- Worktrees are created in `.git/worktree-workspace/`
-- Branch `/` converted to `-` in directory names (`feature/foo` → `feature-foo`)
-- Auto-links `.env`, `node_modules`, `.venv`, `.claude` from main repo
-- Use `-- args` to pass extra arguments to AI tools
-- Set `GTR_CLAUDE_ARGS` or `GTR_OPENCODE_ARGS` for default arguments
+```bash
+# Uninstall gtr
+curl -fsSL https://raw.githubusercontent.com/1noilimrev/gtr/main/uninstall.sh | sh
+
+# Install gwt
+curl -fsSL https://raw.githubusercontent.com/1noilimrev/gwt/main/install.sh | sh
+```
+
+## New Repository
+
+The active development continues at: **[gwt](https://github.com/1noilimrev/gwt)**
+
+All commands remain the same, just use `gwt` instead of `gtr`:
+
+```bash
+gwt add <branch>        # Create worktree
+gwt cd <branch>         # Navigate to worktree
+gwt rm <branch>         # Remove worktree
+gwt rm -s               # Remove current worktree
+gwt rm -a [-f]          # Remove all worktrees
+gwt rm -m <branch>      # Merge into main, then remove
+gwt path <branch>       # Print worktree path
+gwt claude <branch>     # Run claude in worktree
+gwt opencode <branch>   # Run opencode in worktree
+```
 
 ## License
 
